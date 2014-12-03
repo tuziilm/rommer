@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhanghui.rommer.persistence.PopInfoMapper" >
+    <resultMap id="BaseResultMap" type="com.zhanghui.rommer.domain.PopInfo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="uuid" property="uuid" jdbcType="VARCHAR" />
+        <result column="language" property="language" jdbcType="VARCHAR" />
+        <result column="netType" property="netType" jdbcType="VARCHAR" />
+        <result column="channel" property="channel" jdbcType="VARCHAR" />
+        <result column="isShowAd" property="isShowAd" jdbcType="VARCHAR" />
+        <result column="lastShowAdDate" property="lastShowAdDate" jdbcType="VARCHAR" />
+        <result column="country" property="country" jdbcType="VARCHAR" />
+        <result column="tableName" property="tableName" jdbcType="VARCHAR" />
+    </resultMap>
+	<resultMap id="BaseResultMap1" type="com.zhanghui.rommer.domain.PopInfoList" >
+        <result column="channel" property="channel" jdbcType="VARCHAR" />
+        <result column="lastShowAdDate" property="lastShowAdDate" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="INTEGER" />
+    </resultMap>
+    <insert id="insert" parameterType="com.zhanghui.rommer.domain.PopInfo">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">SELECT LAST_INSERT_ID()</selectKey>
+        insert into pop_info(
+        `uuid`,
+        `language`,
+        `netType`,
+        `channel`,
+        `isShowAd`,
+        `lastShowAdDate`,
+        `country`,
+        `tableName`)
+        values(
+        #{uuid,jdbcType=VARCHAR},
+        #{language,jdbcType=VARCHAR},
+        #{netType,jdbcType=VARCHAR},
+        #{channel,jdbcType=VARCHAR},
+        #{isShowAd,jdbcType=VARCHAR},
+        #{lastShowAdDate,jdbcType=VARCHAR},
+        #{country,jdbcType=VARCHAR},
+        #{tableName,jdbcType=VARCHAR})
+    </insert>
+
+    <delete id="deleteById">
+        delete from pop_info where id=#{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByIds">
+        delete from pop_info where id in
+        <foreach collection="array" item="ids"  open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <update id="updateByIdSelective" parameterType="com.zhanghui.rommer.domain.PopInfo">
+        update pop_info
+        <set>
+            <if test="fn.notEmpty(uuid)">
+                uuid=#{uuid,jdbcType=VARCHAR},
+            </if>
+            <if test="fn.notEmpty(language)">
+                language=#{language,jdbcType=VARCHAR},
+            </if>
+            <if test="fn.notEmpty(netType)">
+                netType=#{netType,jdbcType=VARCHAR},
+            </if>
+            <if test="fn.notEmpty(channel)">
+                channel=#{channel,jdbcType=VARCHAR},
+            </if>
+            <if test="fn.notEmpty(isShowAd)">
+                isShowAd=#{isShowAd,jdbcType=VARCHAR},
+            </if>
+            <if test="fn.notEmpty(lastShowAdDate)">
+                lastShowAdDate=#{lastShowAdDate,jdbcType=VARCHAR},
+            </if>
+            <if test="fn.notEmpty(country)">
+                country=#{country,jdbcType=VARCHAR},
+            </if>
+            <if test="fn.notEmpty(tableName)">
+                tableName=#{tableName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <sql id="Base_Column_List">
+        `id`,
+        `uuid`,
+        `language`,
+        `netType`,
+        `channel`,
+        `isShowAd`,
+        `lastShowAdDate`,
+        `country`,
+        `tableName`
+    </sql>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from pop_info 
+    </select>
+    <sql id="select_count_where_sql">
+        <where>
+        	LENGTH(lastShowAdDate)!=0 AND subStr(lastShowAdDate,1,10) >= #{query.startTime} and subStr(lastShowAdDate,1,10) &lt;= #{query.endTime}
+            <if test="query.channel != null">
+               and channel = #{query.channel}
+            </if>
+            <if test="query.country != null">
+               and country = #{query.country}
+            </if>
+        </where>
+    </sql>
+    <select id="countAll" resultType="java.lang.Integer" parameterType="com.zhanghui.rommer.common.Paginator" >
+        select  count(*)
+        from  pop_info  
+        <include refid="select_count_where_sql"/>
+    </select>
+    <select id="count" resultType="java.lang.Integer" parameterType="com.zhanghui.rommer.common.Paginator" >
+        select count(*)
+        from (select  count(uuid) count,channel,subStr(lastShowAdDate,1,10) lastShowAdDate, country
+        from  pop_info  
+        <include refid="select_count_where_sql"/>
+		group by channel ,lastShowAdDate, country
+		order by lastShowAdDate desc
+		limit #{start},#{sqlSize}) as abc
+    </select>
+    <select id="select" resultMap="BaseResultMap1" parameterType="com.zhanghui.rommer.common.Paginator" >
+        select  count(uuid) count,channel,subStr(lastShowAdDate,1,10) lastShowAdDate, country
+        from  pop_info  
+        <include refid="select_count_where_sql"/>
+		group by channel ,lastShowAdDate, country
+		order by lastShowAdDate desc limit #{start},#{sqlSize}
+    </select>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select <include refid="Base_Column_List"/> from pop_info where id=#{id,jdbcType=INTEGER}
+    </select>
+</mapper>
