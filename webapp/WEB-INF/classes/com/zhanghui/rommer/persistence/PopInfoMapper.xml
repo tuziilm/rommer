@@ -11,6 +11,7 @@
         <result column="lastShowAdDate" property="lastShowAdDate" jdbcType="VARCHAR" />
         <result column="country" property="country" jdbcType="VARCHAR" />
         <result column="tableName" property="tableName" jdbcType="VARCHAR" />
+        <result column="onLineTime" property="onLineTime" jdbcType="VARCHAR" />
     </resultMap>
 	<resultMap id="BaseResultMap1" type="com.zhanghui.rommer.domain.PopInfoList" >
         <result column="channel" property="channel" jdbcType="VARCHAR" />
@@ -27,7 +28,8 @@
         `isShowAd`,
         `lastShowAdDate`,
         `country`,
-        `tableName`)
+        `tableName`,
+        `onLineTime`)
         values(
         #{uuid,jdbcType=VARCHAR},
         #{language,jdbcType=VARCHAR},
@@ -36,7 +38,8 @@
         #{isShowAd,jdbcType=VARCHAR},
         #{lastShowAdDate,jdbcType=VARCHAR},
         #{country,jdbcType=VARCHAR},
-        #{tableName,jdbcType=VARCHAR})
+        #{tableName,jdbcType=VARCHAR},
+        #{onLineTime,jdbcType=VARCHAR})
     </insert>
 
     <delete id="deleteById">
@@ -76,6 +79,9 @@
             <if test="fn.notEmpty(tableName)">
                 tableName=#{tableName,jdbcType=VARCHAR},
             </if>
+            <if test="fn.notEmpty(onLineTime)">
+                onLineTime=#{onLineTime,jdbcType=VARCHAR},
+            </if>
         </set>
         where id=#{id,jdbcType=INTEGER}
     </update>
@@ -89,7 +95,8 @@
         `isShowAd`,
         `lastShowAdDate`,
         `country`,
-        `tableName`
+        `tableName`,
+        `onLineTime`
     </sql>
     <select id="selectAll" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/> from pop_info 

@@ -17,7 +17,7 @@ public final class LogStatisticsRunner {
 			System.out.println("analyzing....");
 			List<ChartPvUvData> data = analyzer.analyze();
 			System.out.println("ready for persist result to database");
-			DatabaseHelper.persistToDatabase(data);
+//			DatabaseHelper.persistToDatabase(data);
 		} catch (SQLException e) {
 			System.out.println("failed to persist result to database");
 			e.printStackTrace();

@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.zhanghui.rommer.domain.PopInfo;
@@ -103,5 +104,82 @@ public final class DatabaseHelper {
 			closeDatabaseComponent(null, pstmt, conn);
 		}
 	}
-
+	public final static void persistToDatabase2(List<PopInfo> datas) throws SQLException, ClassNotFoundException {
+        if(datas==null || datas.isEmpty()){
+            return;
+        }
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		try {
+			conn = getDatabaseConnection();
+			String sql = "INSERT INTO activity_user (UUID,channel,lastShowAdDate,country) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE lastShowAdDate = ?";
+			pstmt = conn.prepareStatement(sql);
+            int count=0;
+			for (PopInfo data : datas) {
+				pstmt.setString(1, data.getUuid());
+				pstmt.setString(2, data.getChannel());
+				pstmt.setString(3, data.getLastShowAdDate());
+				pstmt.setString(4, data.getCountry());
+				pstmt.setString(5, data.getLastShowAdDate());
+				pstmt.addBatch();
+                count++;
+                if(count>=BATCH_SIZE){
+                    pstmt.executeBatch();
+                    pstmt.clearBatch();
+                    count=0;
+                }
+			}
+            if(count>0) {
+                pstmt.executeBatch();
+            }
+		} finally {
+			closeDatabaseComponent(null, pstmt, conn);
+		}
+	}
+	public final static List<PopInfo> findAllPopInfo() throws SQLException, ClassNotFoundException {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		List<PopInfo> popInfoList = new ArrayList<PopInfo>();
+		try {
+			conn = getDatabaseConnection();
+			String sql = "select id,uuid,language,netType,channel,isShowAd,lastShowAdDate,country,tableName,ip,onLineTime from pop_info";
+			pstmt=conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			PopInfo p = new PopInfo();
+			while(rs.next()){
+				p.setId(rs.getInt(1));
+				p.setUuid(rs.getString(2));
+				p.setLanguage(rs.getString(3));
+				p.setNetType(rs.getString(4));
+				p.setChannel(rs.getString(5));
+				p.setIsShowAd(rs.getString(6));
+				p.setLastShowAdDate(rs.getString(7));
+				p.setCountry(rs.getString(8));
+				p.setTableName(rs.getString(9));
+				p.setIp(rs.getString(10));
+				p.setOnLineTime(rs.getString(11));
+				popInfoList.add(p);
+			}
+		} finally {
+			closeDatabaseComponent(null, pstmt, conn);
+		}
+		return popInfoList;
+	}
+	public final static void deletePopInfo(List<PopInfo> datas) throws SQLException, ClassNotFoundException {
+        if(datas==null || datas.isEmpty()){
+            return;
+        }
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		try {
+			conn = getDatabaseConnection();
+			String sql = "delete * from pop_info where id = ?";
+			pstmt = conn.prepareStatement(sql);
+			for (PopInfo data : datas) {
+				pstmt.setInt(1, data.getId());
+			}
+		} finally {
+			closeDatabaseComponent(null, pstmt, conn);
+		}
+	}
 }
