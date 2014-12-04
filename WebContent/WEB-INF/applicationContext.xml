@@ -11,7 +11,6 @@
      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
 	<context:property-placeholder location="classpath:config.properties" />
-
    <!-- datasource -->
     <bean id="localDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
@@ -62,4 +61,40 @@
 		<constructor-arg index="2" value="${redis.port}"/>
 		<constructor-arg index="3" value="${redis.timeout}"/>
 	</bean>
+		<bean id="timerTest" class="com.zhanghui.rommer.statistics.TimerSchedule">
+	</bean>
+
+	<bean id="timerTestDetail"    
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+        <property name="targetObject">  
+            <ref bean="timerTest"/>  
+        </property>  
+        <property name="targetMethod">  
+            <value>excute</value>  
+        </property>  
+        <property name="concurrent">  
+            <value>false</value>  
+        </property>  
+    </bean> 
+	
+	<bean id="timerTestTrigger"    
+          class="org.springframework.scheduling.quartz.CronTriggerBean">  
+        <property name="jobDetail">  
+            <ref bean="timerTestDetail"/>  
+        </property>  
+        <property name="cronExpression">  
+            <value>* * * * * ?</value>  
+        </property>  
+     </bean> 
+    
+	<bean id="taskSchedulerFactory"  
+	        class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> 
+	       	<property name="autoStartup" value="true"/>  
+	        <property name="startupDelay" value="1"/>  
+	        <property name="triggers">  
+	            <list>  
+	                <ref local="timerTestTrigger"/> 
+	            </list>  
+	        </property>  
+     </bean>
 </beans>

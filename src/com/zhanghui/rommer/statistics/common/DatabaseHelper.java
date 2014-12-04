@@ -112,15 +112,14 @@ public final class DatabaseHelper {
 		PreparedStatement pstmt = null;
 		try {
 			conn = getDatabaseConnection();
-			String sql = "INSERT INTO activity_user (UUID,channel,lastShowAdDate,country) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE lastShowAdDate = ?";
+			String sql = "INSERT INTO activity_user (channel,country,lastShowAdDate,count) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE count = count+1";
 			pstmt = conn.prepareStatement(sql);
             int count=0;
 			for (PopInfo data : datas) {
-				pstmt.setString(1, data.getUuid());
-				pstmt.setString(2, data.getChannel());
+				pstmt.setString(1, data.getChannel());
+				pstmt.setString(2, data.getCountry());
 				pstmt.setString(3, data.getLastShowAdDate());
-				pstmt.setString(4, data.getCountry());
-				pstmt.setString(5, data.getLastShowAdDate());
+				pstmt.setInt(4, 1);
 				pstmt.addBatch();
                 count++;
                 if(count>=BATCH_SIZE){
@@ -145,8 +144,8 @@ public final class DatabaseHelper {
 			String sql = "select id,uuid,language,netType,channel,isShowAd,lastShowAdDate,country,tableName,ip,onLineTime from pop_info";
 			pstmt=conn.prepareStatement(sql);
 			ResultSet rs = pstmt.executeQuery();
-			PopInfo p = new PopInfo();
 			while(rs.next()){
+				PopInfo p = new PopInfo();
 				p.setId(rs.getInt(1));
 				p.setUuid(rs.getString(2));
 				p.setLanguage(rs.getString(3));
@@ -173,11 +172,13 @@ public final class DatabaseHelper {
 		PreparedStatement pstmt = null;
 		try {
 			conn = getDatabaseConnection();
-			String sql = "delete * from pop_info where id = ?";
+			String sql = "delete from pop_info where id = ?";
 			pstmt = conn.prepareStatement(sql);
 			for (PopInfo data : datas) {
 				pstmt.setInt(1, data.getId());
+				pstmt.addBatch();
 			}
+			int[] result=pstmt.executeBatch();  
 		} finally {
 			closeDatabaseComponent(null, pstmt, conn);
 		}

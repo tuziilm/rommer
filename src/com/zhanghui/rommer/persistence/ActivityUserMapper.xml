@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhanghui.rommer.persistence.ActivityUserMapper" >
+    <resultMap id="BaseResultMap" type="com.zhanghui.rommer.domain.ActivityUser" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="channel" property="channel" jdbcType="VARCHAR" />
+        <result column="lastShowAdDate" property="lastShowAdDate" jdbcType="VARCHAR" />
+        <result column="country" property="country" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="INTEGER" />
+    </resultMap>
+    <insert id="insert" parameterType="com.zhanghui.rommer.domain.ActivityUser">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">SELECT LAST_INSERT_ID()</selectKey>
+        insert into activity_user(
+        `channel`,
+        `lastShowAdDate`,
+        `country`,
+        `count`)
+        values(
+        #{channel,jdbcType=VARCHAR},
+        #{lastShowAdDate,jdbcType=VARCHAR},
+        #{country,jdbcType=VARCHAR},
+        #{count,jdbcType=INTEGER})
+    </insert>
+
+    <delete id="deleteById">
+        delete from activity_user where id=#{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByIds">
+        delete from activity_user where id in
+        <foreach collection="array" item="ids"  open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <update id="updateByIdSelective" parameterType="com.zhanghui.rommer.domain.ActivityUser">
+        update activity_user
+        <set>
+            <if test="fn.notEmpty(channel)">
+                channel=#{channel,jdbcType=VARCHAR},
+            </if>
+            <if test="fn.notEmpty(lastShowAdDate)">
+                lastShowAdDate=#{lastShowAdDate,jdbcType=VARCHAR},
+            </if>
+            <if test="fn.notEmpty(country)">
+                country=#{country,jdbcType=VARCHAR},
+            </if>
+            <if test="fn.notEmpty(count)">
+                count=#{count,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <sql id="Base_Column_List">
+        `id`,
+        `channel`,
+        `lastShowAdDate`,
+        `country`,
+        `count`
+    </sql>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from activity_user 
+    </select>
+    <sql id="select_count_where_sql">
+        <where>
+        	LENGTH(lastShowAdDate)!=0 AND subStr(lastShowAdDate,1,10) >= #{query.startTime} and subStr(lastShowAdDate,1,10) &lt;= #{query.endTime}
+            <if test="query.channel != null">
+               and channel = #{query.channel}
+            </if>
+            <if test="query.country != null">
+               and country = #{query.country}
+            </if>
+        </where>
+    </sql>
+    <select id="count" resultType="java.lang.Integer" parameterType="com.zhanghui.rommer.common.Paginator" >
+        select count(*)
+        from  activity_user  
+        <include refid="select_count_where_sql"/>
+		order by lastShowAdDate desc
+		limit #{start},#{sqlSize}) as abc
+    </select>
+    <select id="select" resultMap="BaseResultMap1" parameterType="com.zhanghui.rommer.common.Paginator" >
+        select  count,channel,subStr(lastShowAdDate,1,10) lastShowAdDate, country
+        from  activity_user  
+        <include refid="select_count_where_sql"/>
+		group by channel ,lastShowAdDate, country
+		order by lastShowAdDate desc limit #{start},#{sqlSize}
+    </select>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select <include refid="Base_Column_List"/> from activity_user where id=#{id,jdbcType=INTEGER}
+    </select>
+</mapper>
