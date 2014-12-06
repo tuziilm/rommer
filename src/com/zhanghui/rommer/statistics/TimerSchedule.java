@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.zhanghui.rommer.common.DateUtils;
+import com.zhanghui.rommer.domain.ActivityUser;
 import com.zhanghui.rommer.domain.PopInfo;
 import com.zhanghui.rommer.statistics.common.DatabaseHelper;
 
@@ -14,19 +15,22 @@ public class TimerSchedule {
 			System.out.println(popInfoList.size());
 			//查询出前一天的所有记录
 			popInfoList = preHandler(popInfoList);
-			//将前一天所有记录备份到备份表中,统计激活量
-			doHandler(popInfoList);
+			System.out.println(popInfoList.size()+"after do handler");
+			//将前一天所有记录备份到备份表中
+			bakPopInfo(popInfoList);
+			//统计激活量
+			countActivityUser();
 			//删除原始表的前一天记录
-			postHandler(popInfoList);
+//			postHandler(popInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	public List<PopInfo> preHandler(List<PopInfo> popInfoList){
 		String yesterday = DateUtils.yesterdayString(DateUtils.SIMPLE_DATE_PATTERN2);
-		Boolean flag = false;
 		List<PopInfo> removeList = new ArrayList<PopInfo>();
 		for(PopInfo p : popInfoList){
+			Boolean flag = false;
 			if(p.getOnLineTime()!=null){
 				String[] onLineTime = p.getOnLineTime().split(",");
 				for(String str :onLineTime){
@@ -42,18 +46,25 @@ public class TimerSchedule {
 		popInfoList.removeAll(removeList);
 		return popInfoList;
 	}
-	public void doHandler(List<PopInfo> popInfoList){
+	public void bakPopInfo(List<PopInfo> popInfoList){
 		try {
 			//备份到备份表中
 			DatabaseHelper.persistToDatabase(popInfoList);
-			DatabaseHelper.persistToDatabase2(popInfoList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public void countActivityUser(){
+		try {
+			List<ActivityUser> activityUsersList = DatabaseHelper.countFromBak();
+			DatabaseHelper.saveActivityUser(activityUsersList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	public void postHandler(List<PopInfo> popInfoList){
 		try {
-			DatabaseHelper.deletePopInfo(popInfoList);
+//			DatabaseHelper.deletePopInfo(popInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

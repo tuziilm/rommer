@@ -2,8 +2,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <c:set var="_pageTitle" value="销量统计" scope="request"/>
 <c:set var="_underPop" value="active" scope="request"/>
-<c:set var="_activePopInfo" value="active" scope="request"/>
-<c:set var="_module" value="popInfo" scope="request"/>
+<c:set var="_activeActivityUser" value="active" scope="request"/>
+<c:set var="_module" value="activityUser" scope="request"/>
 <c:import url="../theme/${_theme}/header.jsp"></c:import>
 <!-- main content -->
 	<div class="page-header"><h1>销量统计</h1></div>

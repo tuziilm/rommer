@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zhanghui.rommer.domain.ActivityUser;
 import com.zhanghui.rommer.domain.PopInfo;
 
 /**
@@ -88,7 +89,7 @@ public final class DatabaseHelper {
 				pstmt.setString(8, data.getTableName());
 				pstmt.setString(9, data.getIp());
 				pstmt.setString(10, data.getOnLineTime());
-				pstmt.setString(11, data.getOnLineTime());
+				pstmt.setString(11, ","+data.getOnLineTime());
 				pstmt.addBatch();
                 count++;
                 if(count>=BATCH_SIZE){
@@ -104,7 +105,7 @@ public final class DatabaseHelper {
 			closeDatabaseComponent(null, pstmt, conn);
 		}
 	}
-	public final static void persistToDatabase2(List<PopInfo> datas) throws SQLException, ClassNotFoundException {
+	public final static void saveActivityUser(List<ActivityUser> datas) throws SQLException, ClassNotFoundException {
         if(datas==null || datas.isEmpty()){
             return;
         }
@@ -112,14 +113,15 @@ public final class DatabaseHelper {
 		PreparedStatement pstmt = null;
 		try {
 			conn = getDatabaseConnection();
-			String sql = "INSERT INTO activity_user (channel,country,lastShowAdDate,count) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE count = count+1";
+			String sql = "INSERT INTO activity_user (channel,country,lastShowAdDate,count) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE count = ?";
 			pstmt = conn.prepareStatement(sql);
             int count=0;
-			for (PopInfo data : datas) {
+			for (ActivityUser data : datas) {
 				pstmt.setString(1, data.getChannel());
 				pstmt.setString(2, data.getCountry());
 				pstmt.setString(3, data.getLastShowAdDate());
-				pstmt.setInt(4, 1);
+				pstmt.setInt(4, data.getCount());
+				pstmt.setInt(5, data.getCount());
 				pstmt.addBatch();
                 count++;
                 if(count>=BATCH_SIZE){
@@ -182,5 +184,27 @@ public final class DatabaseHelper {
 		} finally {
 			closeDatabaseComponent(null, pstmt, conn);
 		}
+	}
+	public final static List<ActivityUser> countFromBak() throws SQLException, ClassNotFoundException {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		List<ActivityUser> activityUserList = new ArrayList<ActivityUser>();
+		try {
+			conn = getDatabaseConnection();
+			String sql = "SELECT COUNT(UUID) count, channel ,country , SUBSTR(lastShowAdDate,1,10) FROM pop_info_bak GROUP BY channel ,country,SUBSTR(lastShowAdDate,1,10)";
+			pstmt=conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()){
+				ActivityUser a = new ActivityUser();
+				a.setCount(rs.getInt(1));
+				a.setChannel(rs.getString(2));
+				a.setCountry(rs.getString(3));
+				a.setLastShowAdDate(rs.getString(4));
+				activityUserList.add(a);
+			}
+		} finally {
+			closeDatabaseComponent(null, pstmt, conn);
+		}
+		return activityUserList;
 	}
 }

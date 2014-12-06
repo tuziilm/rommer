@@ -3,6 +3,7 @@ package com.zhanghui.rommer.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zhanghui.rommer.common.Paginator;
 import com.zhanghui.rommer.domain.ActivityUser;
 import com.zhanghui.rommer.persistence.ActivityUserMapper;
 
@@ -13,5 +14,8 @@ public class ActivityUserService extends SimpleCacheSupportService<ActivityUser>
 	public void setLinkMapper(ActivityUserMapper activityUserMapper) {
 		this.mapper = activityUserMapper;
 		this.activityUserMapper=activityUserMapper;
+	}
+	public int countAll(Paginator page){
+		return activityUserMapper.count(page);
 	}
 }

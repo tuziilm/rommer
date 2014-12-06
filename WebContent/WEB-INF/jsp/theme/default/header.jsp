@@ -46,7 +46,7 @@
             <%SystemUserType sut=LoginContext.get().systemUserType;
             if(sut==SystemUserType.ADMIN) {%>
                 <%} %>
-              <li class="${_activePopInfo}"><a href="${basePath}popInfo/list">popInfo</a></li>
+              <li class="${_activeActivityUser}"><a href="${basePath}activityUser/list">popInfo</a></li>
               <li class="${_activeSystem}"><a href="${basePath}sysuser/index">系统</a></li>
             </ul>
           </div><!--/.nav-collapse -->

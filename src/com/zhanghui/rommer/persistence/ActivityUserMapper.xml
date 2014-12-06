@@ -63,7 +63,7 @@
     </select>
     <sql id="select_count_where_sql">
         <where>
-        	LENGTH(lastShowAdDate)!=0 AND subStr(lastShowAdDate,1,10) >= #{query.startTime} and subStr(lastShowAdDate,1,10) &lt;= #{query.endTime}
+        	LENGTH(lastShowAdDate)!=0 AND lastShowAdDate >= #{query.startTime} and lastShowAdDate &lt;= #{query.endTime}
             <if test="query.channel != null">
                and channel = #{query.channel}
             </if>
@@ -77,10 +77,10 @@
         from  activity_user  
         <include refid="select_count_where_sql"/>
 		order by lastShowAdDate desc
-		limit #{start},#{sqlSize}) as abc
+		limit #{start},#{sqlSize}
     </select>
-    <select id="select" resultMap="BaseResultMap1" parameterType="com.zhanghui.rommer.common.Paginator" >
-        select  count,channel,subStr(lastShowAdDate,1,10) lastShowAdDate, country
+    <select id="select" resultMap="BaseResultMap" parameterType="com.zhanghui.rommer.common.Paginator" >
+        select  count,channel, lastShowAdDate, country
         from  activity_user  
         <include refid="select_count_where_sql"/>
 		group by channel ,lastShowAdDate, country
