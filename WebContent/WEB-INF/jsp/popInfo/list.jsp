@@ -2,8 +2,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <c:set var="_pageTitle" value="销量统计" scope="request"/>
 <c:set var="_underPop" value="active" scope="request"/>
-<c:set var="_activePopInfo" value="active" scope="request"/>
-<c:set var="_module" value="popInfo" scope="request"/>
+<c:set var="_activeActivityUser" value="active" scope="request"/>
+<c:set var="_module" value="activityUser" scope="request"/>
 <c:import url="../theme/${_theme}/header.jsp"></c:import>
 <!-- main content -->
 	<div class="page-header"><h1>销量统计</h1></div>
@@ -21,15 +21,15 @@
 						<tr>
 							<th>客户channel</th>
 							<th>国家</th>
-                            <th>次数</th>
+							<th>在线量</th>
                             <th>日期</th>
 						</tr>
 						<c:forEach var="data" items="${datas}">
 							<tr>
                                 <td>${data.channel}</td>
                                 <td>${countryMap[data.country].chineseName}</td>
-								<td>${data.count}</td>
-								<td>${data.lastShowAdDate}</td>
+                                <td>${data.count}</td>
+								<td>${date}</td>
 							</tr>
 						</c:forEach>
 					</c:otherwise>

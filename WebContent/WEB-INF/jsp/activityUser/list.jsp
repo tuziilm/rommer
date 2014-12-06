@@ -1,7 +1,7 @@
 <%@include file="../include/common.jsp" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <c:set var="_pageTitle" value="销量统计" scope="request"/>
-<c:set var="_underPop" value="active" scope="request"/>
+<c:set var="_underActivityUser" value="active" scope="request"/>
 <c:set var="_activeActivityUser" value="active" scope="request"/>
 <c:set var="_module" value="activityUser" scope="request"/>
 <c:import url="../theme/${_theme}/header.jsp"></c:import>

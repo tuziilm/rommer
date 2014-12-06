@@ -49,6 +49,7 @@ public class PopInfoController extends CRUDController<PopInfo, PopInfoService, c
 		private String country;
 		private String tableName;
 		private String ip;
+		private String onLineTime;
 		
 		public String getUuid() {
 			return uuid;
@@ -121,6 +122,14 @@ public class PopInfoController extends CRUDController<PopInfo, PopInfoService, c
 		public void setIp(String ip) {
 			this.ip = ip;
 		}
+		
+		public String getOnLineTime() {
+			return onLineTime;
+		}
+
+		public void setOnLineTime(String onLineTime) {
+			this.onLineTime = onLineTime;
+		}
 
 		@Override
 		public PopInfo newObj() {
@@ -138,6 +147,7 @@ public class PopInfoController extends CRUDController<PopInfo, PopInfoService, c
 			obj.setNetType(netType);
 			obj.setTableName(tableName);
 			obj.setUuid(uuid);
+			obj.setOnLineTime(onLineTime);
 		}
 	}
 
@@ -158,7 +168,6 @@ public class PopInfoController extends CRUDController<PopInfo, PopInfoService, c
 	       model.addAttribute("countries", Country.countries);
 	       model.addAttribute("countryMap", Country.shortcut2CountryMap);
 	       query.startTime=query.startTime.replace("/", "-");
-	       query.endTime=query.endTime.replace("/", "-");
 	       if(query.country.equals("all")){
 	    	   query.country=null;
 	       }
@@ -169,17 +178,16 @@ public class PopInfoController extends CRUDController<PopInfo, PopInfoService, c
 			Model model) {
 		int total = service.countAll(paginator);
 		model.addAttribute("total", total);
+		model.addAttribute("date", query.startTime);
 		super.postList(page, paginator, query, model);
 	}
 	 public static class Query extends com.zhanghui.rommer.common.Query {
 		private String channel;
 		private String startTime;
-		private String endTime;
 		private String country;
 		
 		public Query() {
-			this.startTime = DateFormatUtils.format(DateUtils.addDays(new Date(), -30), "yyyy-MM-dd");
-            this.endTime = DateFormatUtils.format(DateUtils.addDays(new Date(), -1), "yyyy-MM-dd");
+			this.startTime = DateFormatUtils.format(DateUtils.addDays(new Date(), -1), "yyyy-MM-dd");
 			if(LoginContext.isAdmin()){
 				this.channel=null;
 			}else{
@@ -204,15 +212,6 @@ public class PopInfoController extends CRUDController<PopInfo, PopInfoService, c
 		public void setStartTime(String startTime) {
 			this.startTime = startTime;
 			addItem("startTime", startTime);
-		}
-
-		public String getEndTime() {
-			return endTime;
-		}
-
-		public void setEndTime(String endTime) {
-			this.endTime = endTime;
-			addItem("endTime", endTime);
 		}
 
 		public String getCountry() {

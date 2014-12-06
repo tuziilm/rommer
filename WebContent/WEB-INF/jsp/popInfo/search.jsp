@@ -15,9 +15,7 @@
             document.getElementById("country_sel").value = '${rommer:defVal(param.country,"all")}';
         </script>
         <label>开始时间:</label>
-        <input value="${rommer:defVal(param.startTime,rommer:dateStringAboutNow("yyyy-MM-dd", -30))}" type="text" name="startTime" class="input-small" id="startTime"/>
-        <label>结束时间:</label>
-        <input value="${rommer:defVal(param.endTime,rommer:yesterdayString("yyyy-MM-dd"))}" type="text" name="endTime" class="input-small" id="endTime"/>
+        <input value="${rommer:defVal(param.startTime,rommer:yesterdayString("yyyy-MM-dd"))}" type="text" name="startTime" class="input-small" id="startTime"/>
         <input type="submit" class="btn" value="查询"/>
     </form>
 </div>
