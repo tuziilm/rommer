@@ -171,6 +171,7 @@ public class PopInfoController extends CRUDController<PopInfo, PopInfoService, c
 	       if(query.country.equals("all")){
 	    	   query.country=null;
 	       }
+	       System.out.println(query.channel+"###"+query.country+"@@"+query.startTime);
 	       return super.preList(page, paginator, query, model);
 	   }
 	 @Override

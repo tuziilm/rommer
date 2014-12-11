@@ -16,6 +16,6 @@ public class ActivityUserService extends SimpleCacheSupportService<ActivityUser>
 		this.activityUserMapper=activityUserMapper;
 	}
 	public int countAll(Paginator page){
-		return activityUserMapper.count(page);
+		return activityUserMapper.countAll(page);
 	}
 }

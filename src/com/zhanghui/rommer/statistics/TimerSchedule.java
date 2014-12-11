@@ -21,7 +21,7 @@ public class TimerSchedule {
 			//统计激活量
 			countActivityUser();
 			//删除原始表的前一天记录
-//			postHandler(popInfoList);
+			postHandler(popInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -64,7 +64,7 @@ public class TimerSchedule {
 	}
 	public void postHandler(List<PopInfo> popInfoList){
 		try {
-//			DatabaseHelper.deletePopInfo(popInfoList);
+			DatabaseHelper.deletePopInfo(popInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

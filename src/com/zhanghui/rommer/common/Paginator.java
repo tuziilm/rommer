@@ -2,7 +2,7 @@ package com.zhanghui.rommer.common;
 
 
 public class Paginator {
-	public final static int DEFAULT_SIZE=12;
+	public final static int DEFAULT_SIZE=10;
 	private int start;
 	private int size;
 	private int page;

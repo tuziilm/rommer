@@ -132,7 +132,7 @@
         select  COUNT(uuid) count ,channel ,country 
         from  pop_info_bak  
         <include refid="select_count_where_sql"/>
-		order by lastShowAdDate desc limit #{start},#{sqlSize}) as temp where temp.count > 0 
+		group by channel ,country order by lastShowAdDate,channel desc limit #{start},#{sqlSize}) as temp where temp.count > 0 
     </select>
     <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select <include refid="Base_Column_List"/> from pop_info_bak where id=#{id,jdbcType=INTEGER}

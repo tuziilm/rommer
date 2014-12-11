@@ -13,11 +13,11 @@ public enum SystemUserType {
 	/** 系统管理员*/
 	ADMIN(0,"系统管理员"),
 	/** 普通运营人员*/
-	OPERATOR(1,"业务员","/clerk","/sysuser/info_modify","/sysuser/index","/sysuser/info_save","/popInfo"),
+	OPERATOR(1,"业务员","/clerk","/sysuser/info_modify","/sysuser/index","/sysuser/info_save","/popInfo","/activityUser"),
 	/** 代理商*/
-	PROXY(2,"代理商","/proxy","/sysuser/info_modify","/sysuser/index","/sysuser/info_save","/popInfo"),
+	PROXY(2,"代理商","/proxy","/sysuser/info_modify","/sysuser/index","/sysuser/info_save","/popInfo","/activityUser"),
 	/** 客户 */
-	CLIENT(3,"客户","/client","/sysuser/info_modify","/sysuser/index","/sysuser/info_save","/popInfo"),
+	CLIENT(3,"客户","/client","/sysuser/info_modify","/sysuser/index","/sysuser/info_save","/popInfo","/activityUser"),
 	/** 未识别*/
 	UNKNOWN(-1,"未知");
 	private int id;
