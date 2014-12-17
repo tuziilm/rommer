@@ -120,6 +120,7 @@ public final class DatabaseHelper {
 				pstmt.setString(1, data.getChannel());
 				pstmt.setString(2, data.getCountry());
 				pstmt.setString(3, data.getLastShowAdDate());
+				int activityCount = activityCount(data.getChannel(),data.getLastShowAdDate());
 				pstmt.setInt(4, data.getCount());
 				pstmt.setInt(5, data.getCount());
 				pstmt.addBatch();
@@ -137,6 +138,29 @@ public final class DatabaseHelper {
 			closeDatabaseComponent(null, pstmt, conn);
 		}
 	}
+	/**
+	 * 查询用户当月激活量
+	 */
+	public final static int activityCount(String channel,String lastShowAdDate) throws SQLException, ClassNotFoundException {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		int count=0;
+		try {
+			conn = getDatabaseConnection();
+			String sql = "SELECT SUM(COUNT) FROM activity_user WHERE lastShowAdDate LIKE ? AND channel = ? ";
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setString(1, lastShowAdDate.substring(0 , 7).concat("%"));
+			pstmt.setString(2, channel);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()){
+				count = rs.getInt(1);
+			}
+		} finally {
+			closeDatabaseComponent(null, pstmt, conn);
+		}
+		return count;
+	}
+	
 	public final static List<PopInfo> findAllPopInfo() throws SQLException, ClassNotFoundException {
 		Connection conn = null;
 		PreparedStatement pstmt = null;

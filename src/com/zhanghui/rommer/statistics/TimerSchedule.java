@@ -1,5 +1,6 @@
 package com.zhanghui.rommer.statistics;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +71,12 @@ public class TimerSchedule {
 		}
 	}
 	public static void main(String[] args) {
-		TimerSchedule t = new TimerSchedule();
-		t.excute();
+		try {
+			int count = DatabaseHelper.activityCount("a012234", "2014-12-08");
+			System.out.println(count);
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
