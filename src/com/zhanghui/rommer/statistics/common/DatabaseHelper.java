@@ -121,8 +121,10 @@ public final class DatabaseHelper {
 				pstmt.setString(2, data.getCountry());
 				pstmt.setString(3, data.getLastShowAdDate());
 				int activityCount = activityCount(data.getChannel(),data.getLastShowAdDate());
-				pstmt.setInt(4, data.getCount());
-				pstmt.setInt(5, data.getCount());
+				if(data.getCount()>500||activityCount+data.getCount()>500){
+					pstmt.setInt(4, (int)Math.round(data.getCount()*0.2));
+					pstmt.setInt(5, (int)Math.round(data.getCount()*0.2));
+				}
 				pstmt.addBatch();
                 count++;
                 if(count>=BATCH_SIZE){
