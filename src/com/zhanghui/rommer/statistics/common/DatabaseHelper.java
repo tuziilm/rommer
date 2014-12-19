@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.zhanghui.rommer.domain.ActivityUser;
 import com.zhanghui.rommer.domain.PopInfo;
@@ -105,7 +106,7 @@ public final class DatabaseHelper {
 			closeDatabaseComponent(null, pstmt, conn);
 		}
 	}
-	public final static void saveActivityUser(List<ActivityUser> datas) throws SQLException, ClassNotFoundException {
+	public final static void saveActivityUser(List<ActivityUser> datas , Map<String ,Integer> map) throws SQLException, ClassNotFoundException {
         if(datas==null || datas.isEmpty()){
             return;
         }
@@ -120,10 +121,25 @@ public final class DatabaseHelper {
 				pstmt.setString(1, data.getChannel());
 				pstmt.setString(2, data.getCountry());
 				pstmt.setString(3, data.getLastShowAdDate());
-				int activityCount = activityCount(data.getChannel(),data.getLastShowAdDate());
-				if(data.getCount()>500||activityCount+data.getCount()>500){
-					pstmt.setInt(4, (int)Math.round(data.getCount()*0.2));
-					pstmt.setInt(5, (int)Math.round(data.getCount()*0.2));
+				//当前用户本月激活量
+				int monthActivityCount = activityCount(data.getChannel(),data.getLastShowAdDate());
+				//map.get(data.getChannel())  当前用户昨天的总激活量
+				int yesterdayActivityCount = map.get(data.getChannel());
+				System.out.println("当前用户本月激活量"+monthActivityCount);
+				/**
+				 * 昨天之前本月激活量>500                  或者昨天总激活量>500                   或者 昨天之前本月激活量+昨天总激活量>500 
+				 */
+				if(monthActivityCount>15||yesterdayActivityCount>15||yesterdayActivityCount+monthActivityCount>15){
+//					pstmt.setInt(4, (int)Math.round(data.getCount()*0.8));
+//					pstmt.setInt(5, (int)Math.round(data.getCount()*0.8));
+					pstmt.setInt(4, (int)Math.round(data.getCount()*Config.rate));
+					pstmt.setInt(5, (int)Math.round(data.getCount()*Config.rate));
+					System.out.println(Config.rate+"@@@@@@@@@@@@@@@@@@");
+//					pstmt.setInt(4, (int)Math.round(data.getCount()*Double.parseDouble(Config.getProperty("kouliang"))));
+//					pstmt.setInt(5, (int)Math.round(data.getCount()*Double.parseDouble(Config.getProperty("kouliang"))));
+				}else{
+					pstmt.setInt(4,data.getCount());
+					pstmt.setInt(5,data.getCount());
 				}
 				pstmt.addBatch();
                 count++;
@@ -211,14 +227,22 @@ public final class DatabaseHelper {
 			closeDatabaseComponent(null, pstmt, conn);
 		}
 	}
-	public final static List<ActivityUser> countFromBak() throws SQLException, ClassNotFoundException {
+	/**
+	 * 统计备份表中前一天激活量的数据
+	 * @param yesterday
+	 * @return
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 */
+	public final static List<ActivityUser> countFromBak(String yesterday) throws SQLException, ClassNotFoundException {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		List<ActivityUser> activityUserList = new ArrayList<ActivityUser>();
 		try {
 			conn = getDatabaseConnection();
-			String sql = "SELECT COUNT(UUID) count, channel ,country , SUBSTR(lastShowAdDate,1,10) FROM pop_info_bak GROUP BY channel ,country,SUBSTR(lastShowAdDate,1,10)";
+			String sql = "SELECT COUNT(UUID) count, channel ,country , SUBSTR(lastShowAdDate,1,10) as showDate FROM pop_info_bak GROUP BY channel ,country,SUBSTR(lastShowAdDate,1,10) having showDate = ?";
 			pstmt=conn.prepareStatement(sql);
+			pstmt.setString(1, yesterday);
 			ResultSet rs = pstmt.executeQuery();
 			while(rs.next()){
 				ActivityUser a = new ActivityUser();
@@ -232,5 +256,24 @@ public final class DatabaseHelper {
 			closeDatabaseComponent(null, pstmt, conn);
 		}
 		return activityUserList;
+	}
+	
+	public final static double getRate() throws SQLException, ClassNotFoundException {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		double rate = 1.0;
+		try {
+			conn = getDatabaseConnection();
+			String sql = "select info from rate";
+			pstmt=conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()){
+				rate = rs.getDouble(1);
+			}
+		} finally {
+			closeDatabaseComponent(null, pstmt, conn);
+		}
+		System.out.println(rate+"===================扣量率");
+		return rate;
 	}
 }

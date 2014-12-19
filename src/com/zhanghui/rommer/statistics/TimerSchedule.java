@@ -1,8 +1,9 @@
 package com.zhanghui.rommer.statistics;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.zhanghui.rommer.common.DateUtils;
 import com.zhanghui.rommer.domain.ActivityUser;
@@ -22,7 +23,7 @@ public class TimerSchedule {
 			//统计激活量
 			countActivityUser();
 			//删除原始表的前一天记录
-			postHandler(popInfoList);
+//			postHandler(popInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,8 +58,19 @@ public class TimerSchedule {
 	}
 	public void countActivityUser(){
 		try {
-			List<ActivityUser> activityUsersList = DatabaseHelper.countFromBak();
-			DatabaseHelper.saveActivityUser(activityUsersList);
+			String yesterday = DateUtils.yesterdayString(DateUtils.SIMPLE_DATE_PATTERN2);
+			//统计备份表中前一天激活量的数据
+			List<ActivityUser> activityUsersList = DatabaseHelper.countFromBak(yesterday);
+			
+			Map<String, Integer> map = new HashMap<String,Integer>();
+			for(ActivityUser a : activityUsersList){
+				if(map.containsKey(a.getChannel())){
+					map.put(a.getChannel(),(map.get(a.getChannel())+a.getCount()));
+				}else{
+					map.put(a.getChannel(), a.getCount());
+				}
+			}
+			DatabaseHelper.saveActivityUser(activityUsersList,map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -71,12 +83,7 @@ public class TimerSchedule {
 		}
 	}
 	public static void main(String[] args) {
-		try {
-			int count = DatabaseHelper.activityCount("a012234", "2014-12-08");
-			System.out.println(count);
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			TimerSchedule ts = new TimerSchedule();
+			ts.excute();
 	}
 }

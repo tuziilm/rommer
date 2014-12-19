@@ -6,6 +6,7 @@ import com.zhanghui.rommer.common.Query;
 import com.zhanghui.rommer.domain.Id;
 import com.zhanghui.rommer.mvc.annotation.Ids;
 import com.zhanghui.rommer.service.BaseService;
+import com.zhanghui.rommer.statistics.common.Config;
 
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

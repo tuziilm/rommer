@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.FileInputStream;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
 
@@ -15,7 +16,17 @@ public final class Config {
 
 	protected final static Properties config=loadConfig();
 	public final static String DIR_LOG=(isWindows?"D:":"")+config.getProperty("logs.root.dir");
-
+	
+    public static double rate = getRate();
+    private static double getRate(){
+    	double rate = 1.0;
+    	try {
+			rate =  DatabaseHelper.getRate();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+    	return rate;
+    }
 	/**
 	 * º”‘ÿ≈‰÷√Œƒº˛
 	 * @throws java.io.FileNotFoundException

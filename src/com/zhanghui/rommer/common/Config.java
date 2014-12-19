@@ -1,12 +1,14 @@
 package com.zhanghui.rommer.common;
 
-import com.google.common.collect.Sets;
-import com.google.common.io.Resources;
-
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
+
+import com.google.common.collect.Sets;
+import com.google.common.io.Resources;
+import com.zhanghui.rommer.statistics.common.DatabaseHelper;
 
 /**
  * 集中定义一些常量
