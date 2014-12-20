@@ -5,6 +5,9 @@
         <li class="${_underActivityUser}"><a href="${basePath}activityUser/list">激活量统计 </a></li>
         <li class="${_underPop}"><a href="${basePath}popInfo/list">在线量展示 </a></li>
     </c:when>
+    <c:when test="${_module=='activityRate' }">
+        <li class="${_underRate}"><a href="${basePath}rate/list">扣量率 </a></li>
+    </c:when>
 	<c:when test="${_module=='system' }">
 		<c:if test="${rommer:isAdmin()}">
 			<li class="${_underSysUser}"><a href="${basePath}sysuser/list">系统用户</a></li>

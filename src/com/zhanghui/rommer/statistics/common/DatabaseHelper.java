@@ -125,18 +125,12 @@ public final class DatabaseHelper {
 				int monthActivityCount = activityCount(data.getChannel(),data.getLastShowAdDate());
 				//map.get(data.getChannel())  当前用户昨天的总激活量
 				int yesterdayActivityCount = map.get(data.getChannel());
-				System.out.println("当前用户本月激活量"+monthActivityCount);
 				/**
 				 * 昨天之前本月激活量>500                  或者昨天总激活量>500                   或者 昨天之前本月激活量+昨天总激活量>500 
 				 */
 				if(monthActivityCount>15||yesterdayActivityCount>15||yesterdayActivityCount+monthActivityCount>15){
-//					pstmt.setInt(4, (int)Math.round(data.getCount()*0.8));
-//					pstmt.setInt(5, (int)Math.round(data.getCount()*0.8));
 					pstmt.setInt(4, (int)Math.round(data.getCount()*Config.rate));
 					pstmt.setInt(5, (int)Math.round(data.getCount()*Config.rate));
-					System.out.println(Config.rate+"@@@@@@@@@@@@@@@@@@");
-//					pstmt.setInt(4, (int)Math.round(data.getCount()*Double.parseDouble(Config.getProperty("kouliang"))));
-//					pstmt.setInt(5, (int)Math.round(data.getCount()*Double.parseDouble(Config.getProperty("kouliang"))));
 				}else{
 					pstmt.setInt(4,data.getCount());
 					pstmt.setInt(5,data.getCount());
@@ -273,7 +267,6 @@ public final class DatabaseHelper {
 		} finally {
 			closeDatabaseComponent(null, pstmt, conn);
 		}
-		System.out.println(rate+"===================扣量率");
 		return rate;
 	}
 }

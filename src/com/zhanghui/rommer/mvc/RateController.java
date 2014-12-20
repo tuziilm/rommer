@@ -16,6 +16,7 @@ import com.zhanghui.rommer.common.Paginator;
 import com.zhanghui.rommer.common.Query;
 import com.zhanghui.rommer.domain.Rate;
 import com.zhanghui.rommer.service.RateService;
+import com.zhanghui.rommer.statistics.common.Config;
 
 /**
  * 扣量入口
@@ -60,8 +61,10 @@ public class RateController extends CRUDController<Rate, RateService, com.zhangh
 			HttpServletRequest request, HttpServletResponse response) {
 		//执行更新或保存的操作
 		Rate rate = form.toObj();
+		Config.rate = rate.getInfo();
 		try{
 			service.saveOrUpdate(rate);
+//			Config.rate=service.getCache().get(0).getInfo();
 		}catch(DuplicateKeyException e){
 			errors.addError(new ObjectError("database", "代号已经存在！"));
 		}

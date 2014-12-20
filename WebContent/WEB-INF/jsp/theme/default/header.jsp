@@ -45,6 +45,7 @@
             <ul class="nav">
             <%SystemUserType sut=LoginContext.get().systemUserType;
             if(sut==SystemUserType.ADMIN) {%>
+              <li class="${_activeRate}"><a href="${basePath}rate/list">扣量</a></li>
                 <%} %>
               <li class="${_activeActivityUser}"><a href="${basePath}activityUser/list">popInfo</a></li>
               <li class="${_activeSystem}"><a href="${basePath}sysuser/index">系统</a></li>

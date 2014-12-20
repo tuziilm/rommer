@@ -2,9 +2,11 @@ package com.zhanghui.rommer.statistics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Multiset.Entry;
 import com.zhanghui.rommer.common.DateUtils;
 import com.zhanghui.rommer.domain.ActivityUser;
 import com.zhanghui.rommer.domain.PopInfo;
@@ -23,7 +25,7 @@ public class TimerSchedule {
 			//统计激活量
 			countActivityUser();
 			//删除原始表的前一天记录
-//			postHandler(popInfoList);
+			postHandler(popInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

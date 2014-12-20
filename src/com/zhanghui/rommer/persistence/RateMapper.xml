@@ -38,18 +38,17 @@
         `info`
     </sql>
     <select id="selectAll" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/> from rate 
+        select <include refid="Base_Column_List"/> from rate order by id
     </select>
     <select id="count" resultType="java.lang.Integer" parameterType="com.zhanghui.rommer.common.Paginator" >
         select count(*)
         from  rate  
-        <include refid="select_count_where_sql"/>
+        order by id
 		limit #{start},#{sqlSize}
     </select>
     <select id="select" resultMap="BaseResultMap" parameterType="com.zhanghui.rommer.common.Paginator" >
         select  *
-        from  rate  
-        <include refid="select_count_where_sql"/>
+        from  rate
 		limit #{start},#{sqlSize}
     </select>
     <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
