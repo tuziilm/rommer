@@ -83,7 +83,7 @@
             <ref bean="timerTestDetail"/>  
         </property>  
         <property name="cronExpression">  
-            <value>20 * * * * ?</value>  
+            <value>* * 2 * * ?</value>  
         </property>  
      </bean> 
     
