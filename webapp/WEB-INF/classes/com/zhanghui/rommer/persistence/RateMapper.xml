@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhanghui.rommer.persistence.RateMapper" >
+    <resultMap id="BaseResultMap" type="com.zhanghui.rommer.domain.Rate" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="info" property="info" jdbcType="DOUBLE" />
+    </resultMap>
+    <insert id="insert" parameterType="com.zhanghui.rommer.domain.Rate">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">SELECT LAST_INSERT_ID()</selectKey>
+        insert into rate(
+        `info`)
+        values(
+        #{info,jdbcType=DOUBLE})
+    </insert>
+
+    <delete id="deleteById">
+        delete from rate where id=#{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByIds">
+        delete from rate where id in
+        <foreach collection="array" item="ids"  open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <update id="updateByIdSelective" parameterType="com.zhanghui.rommer.domain.Rate">
+        update rate
+        <set>
+            <if test="fn.notEmpty(info)">
+                info=#{info,jdbcType=DOUBLE},
+            </if>
+        </set>
+        where id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <sql id="Base_Column_List">
+        `id`,
+        `info`
+    </sql>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from rate order by id
+    </select>
+    <select id="count" resultType="java.lang.Integer" parameterType="com.zhanghui.rommer.common.Paginator" >
+        select count(*)
+        from  rate  
+        order by id
+		limit #{start},#{sqlSize}
+    </select>
+    <select id="select" resultMap="BaseResultMap" parameterType="com.zhanghui.rommer.common.Paginator" >
+        select  *
+        from  rate
+		limit #{start},#{sqlSize}
+    </select>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select <include refid="Base_Column_List"/> from rate where id=#{id,jdbcType=INTEGER}
+    </select>
+</mapper>
